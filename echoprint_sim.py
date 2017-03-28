@@ -68,7 +68,7 @@ def overlap(code1, code2):
 # first do
 # export SPOTIPY_CLIENT_ID='your client id'
 # export SPOTIPY_CLIENT_SECRET='your client secret'
-
+# Get these from the Spotify API console
 
 client_credentials_manager = SpotifyClientCredentials()
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
@@ -79,6 +79,7 @@ running_tid = results['tracks']['items'][0]["uri"]
 results = sp.search(q="cloudbusting kate bush", limit=1)
 cloudbusting_tid = results['tracks']['items'][0]["uri"]
 
+# Get the echoprint string for a track from Spotify
 features = sp.audio_features([running_tid])
 for feature in features:
     analysis = sp._get(feature['analysis_url'])
@@ -90,21 +91,23 @@ for feature in features:
     cloudbusting_echoprint = decode_code_string(analysis['track']['echoprintstring'])
 
 
+# Load the locally generated echoprint strings (from a different file on my hard drive)
+# Use echoprint-codegen to generate these
 local_running_echoprint = decode_code_string(json.load(open('running.json'))[0]["code"])
 local_cloudbusting_echoprint = decode_code_string(json.load(open('cloudbusting.json'))[0]["code"])
 
 (score, count1, count2) = overlap(local_running_echoprint, running_echoprint)
-print "local Running %d vs remote Running %d : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
+print "local Running (length %d) vs remote Running (length %d) : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
 
 (score, count1, count2) = overlap(local_cloudbusting_echoprint, cloudbusting_echoprint)
-print "local Cloudbusting %d vs remote Cloudbusting %d : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
+print "local Cloudbusting (length %d) vs remote Cloudbusting (length %d) : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
 
 (score, count1, count2) = overlap(local_running_echoprint, cloudbusting_echoprint)
-print "local Running %d vs remote Cloudbusting %d : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
+print "local Running (length %d) vs remote Cloudbusting (length %d) : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
 
 (score, count1, count2) = overlap(local_running_echoprint, local_running_echoprint)
-print "local Running %d vs local Running %d : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
+print "local Running (length %d) vs local Running (length %d) : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
 
 (score, count1, count2) = overlap(local_running_echoprint, local_cloudbusting_echoprint)
-print "local Running %d vs local Cloudbusting %d : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
+print "local Running (length %d) vs local Cloudbusting (length %d) : overlap = %d (%2.4f)" % (count1, count2, score, float(score)/count2)
 
