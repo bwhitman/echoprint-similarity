@@ -58,7 +58,7 @@ def overlap(code1, code2):
 	score = 0
 	for x in code1.split(" ")[::2]:
 		count1 = count1 + 1
-		d[x] = d.get("x", 0) + 1
+		d[x] = 1
 	for x in code2.split(" ")[::2]:
 		count2 = count2 + 1
 		score = score + d.get(x, 0)
